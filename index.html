@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Game Zone</title>
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Inter:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#00609e;
+    --red:#c91229;
+    --white:#fdfeff;
+    --shadow: rgba(0,0,0,.25);
+    --panel: rgba(253,254,255,.10);
+    --panel-strong: rgba(253,254,255,.18);
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  html,body{ height:100%; margin:0; }
+
+  body{
+    display:flex; flex-direction:column;
+    background:var(--blue); color:var(--white);
+    font-family:'Inter',system-ui,sans-serif;
+    overflow:hidden; overscroll-behavior:none; user-select:none;
+  }
+
+  h1,h2,.display{ font-family:'Baloo 2',system-ui,sans-serif; }
+
+  button{ font-family:inherit; }
+  button:focus-visible{ outline:4px solid var(--white); outline-offset:3px; }
+
+  /* ---------- header ---------- */
+  .logo-bar{
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+    padding: clamp(10px,2.5vh,26px) 0 clamp(4px,1.5vh,14px);
+  }
+  .logo-bar img{
+    width: clamp(120px,26vw,220px);
+    height:auto;
+    filter: drop-shadow(0 6px 14px var(--shadow));
+  }
+
+  /* ---------- app / views ---------- */
+  #app{ position:relative; flex:1 1 auto; overflow:hidden; }
+  .view{
+    position:absolute; inset:0;
+    display:none; flex-direction:column; align-items:center; justify-content:center;
+    padding: 4vh 5vw; gap: clamp(14px,2.5vh,28px);
+    animation: rise .35s ease both;
+  }
+  .view.active{ display:flex; }
+  @keyframes rise{ from{ opacity:0; transform:translateY(14px);} to{ opacity:1; transform:none;} }
+  @media (prefers-reduced-motion: reduce){ .view{ animation:none; } }
+
+  .back-btn{
+    position:absolute; top: 3vh; left: 5vw;
+    background:var(--panel-strong); color:var(--white);
+    border:none; border-radius:14px;
+    padding: 12px 20px; font-size:1.05rem; font-weight:700;
+    cursor:pointer;
+  }
+  .back-btn:active{ background:var(--panel); }
+
+  .fullscreen-btn{
+    position:absolute; top:3vh; right:5vw;
+    background:transparent; color:var(--white);
+    border:2px solid var(--panel-strong); border-radius:12px;
+    padding:10px 14px; font-size:.95rem; font-weight:700;
+    cursor:pointer; opacity:.85;
+  }
+
+  /* ---------- home ---------- */
+  #home h1{ font-size: clamp(1.8rem,5vw,2.6rem); margin:0 0 .2rem; text-align:center; }
+  #home .subtitle{ margin:0 0 1rem; opacity:.85; font-weight:500; text-align:center; }
+
+  .menu{ display:flex; flex-direction:column; gap:20px; width:100%; max-width:640px; }
+
+  .tile{
+    position:relative;
+    display:flex; align-items:center; gap:18px;
+    background:var(--red); color:var(--white);
+    border:none; border-radius:26px;
+    padding: clamp(18px,3.5vh,28px) 24px;
+    text-align:left; cursor:pointer;
+    box-shadow: 0 8px 0 rgba(0,0,0,.22);
+    transition: transform .08s ease, box-shadow .08s ease;
+  }
+  .tile:active{ transform:translateY(6px); box-shadow:0 2px 0 rgba(0,0,0,.22); }
+
+  .tile-icon{
+    flex:0 0 auto; width:64px; height:64px;
+    display:grid; place-items:center;
+    background:var(--panel-strong); border-radius:16px;
+    font-size:1.8rem;
+  }
+  .tile-text .display{ font-size:1.4rem; font-weight:800; line-height:1.1; }
+  .tile-text p{ margin:.25rem 0 0; font-size:.92rem; opacity:.9; font-weight:500; }
+
+  /* domino pip motif: N dots = game number */
+  .pips{ margin-left:auto; display:flex; gap:6px; flex:0 0 auto; }
+  .pips span{ width:9px; height:9px; border-radius:50%; background:var(--white); opacity:.85; }
+
+  /* ---------- status / restart shared ---------- */
+  .status{ font-size: clamp(1.1rem,3vw,1.5rem); font-weight:800; text-align:center; min-height:1.6em; }
+  .restart-btn{
+    background:var(--red); color:var(--white); border:none; border-radius:16px;
+    padding:14px 30px; font-size:1.15rem; font-weight:800; cursor:pointer;
+    box-shadow:0 5px 0 rgba(0,0,0,.22);
+  }
+  .restart-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.22); }
+
+  /* ---------- tic tac toe ---------- */
+  .xo-board{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:12px;
+    width:min(80vw,440px); aspect-ratio:1;
+  }
+  .xo-cell{
+    background:var(--panel-strong); border-radius:18px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Baloo 2',system-ui; font-size:min(12vw,3.6rem); font-weight:800;
+    cursor:pointer; color:var(--white);
+  }
+  .xo-cell.x{ color:var(--white); }
+  .xo-cell.o{ color:var(--red); -webkit-text-stroke: 2px var(--white); }
+
+  /* ---------- connect four ---------- */
+  .c4-board{
+    display:grid; grid-template-columns:repeat(7,1fr); gap: 1.4vw;
+    background:var(--panel); padding: 1.4vw; border-radius:20px;
+    width:min(92vw,520px); aspect-ratio:7/6;
+  }
+  .c4-cell{ background:var(--panel-strong); border-radius:50%; cursor:pointer; }
+  .c4-cell.p1{ background:var(--red); }
+  .c4-cell.p2{ background:var(--white); }
+
+  /* ---------- tug of war ---------- */
+  .tug-wrap{ width:100%; max-width:620px; display:flex; flex-direction:column; align-items:center; gap:clamp(18px,3vh,34px); flex:1; justify-content:center; }
+  .tug-meter{ width:100%; height:34px; background:var(--panel); border-radius:20px; position:relative; overflow:hidden; border:2px solid var(--panel-strong); }
+  .tug-half{ position:absolute; top:0; bottom:0; width:50%; }
+  .tug-marker{
+    position:absolute; top:-3px; bottom:-3px; left:50%; width:16px;
+    background:var(--white); border-radius:10px; transform:translateX(-50%);
+    box-shadow:0 0 0 4px var(--panel-strong);
+  }
+  .tug-zones{ display:flex; gap:16px; width:100%; flex:1; min-height:0; }
+  .tug-zone{
+    flex:1; border:none; border-radius:24px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Baloo 2',system-ui; font-size:clamp(1rem,3vw,1.5rem); font-weight:800; line-height:1.3;
+    color:var(--white); cursor:pointer;
+  }
+  .tug-zone.p1{ background:var(--red); }
+  .tug-zone.p2{ background:transparent; border:3px solid var(--white); }
+  .tug-zone:active{ filter:brightness(1.12); }
+  .tug-result{ font-size:clamp(1.2rem,3.5vw,1.7rem); font-weight:800; min-height:1.4em; text-align:center; }
+</style>
+</head>
+<body>
+
+<header class="logo-bar">
+  <img src="logo.png" alt="Company logo">
+</header>
+
+<main id="app">
+
+  <!-- HOME -->
+  <section id="home" class="view active">
+    <button class="fullscreen-btn" id="fs-btn">⛶ Full screen</button>
+    <h1 class="display">Pick a game</h1>
+    <p class="subtitle">Tap a game to start playing right away</p>
+    <div class="menu">
+      <button class="tile" data-game="xo">
+        <span class="tile-icon">✕⭘</span>
+        <span class="tile-text"><span class="display">Tic-Tac-Toe</span><p>Three in a row wins</p></span>
+        <span class="pips"><span></span></span>
+      </button>
+      <button class="tile" data-game="c4">
+        <span class="tile-icon">🔴</span>
+        <span class="tile-text"><span class="display">Connect Four</span><p>Line up four to win</p></span>
+        <span class="pips"><span></span><span></span></span>
+      </button>
+      <button class="tile" data-game="tug">
+        <span class="tile-icon">💪</span>
+        <span class="tile-text"><span class="display">Tug of War</span><p>Tap fastest, pull hardest</p></span>
+        <span class="pips"><span></span><span></span><span></span></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- TIC TAC TOE -->
+  <section id="game-xo" class="view">
+    <button class="back-btn" data-back>‹ All games</button>
+    <div class="status" id="xo-status"></div>
+    <div class="xo-board" id="xo-board"></div>
+    <button class="restart-btn" id="xo-restart">Play again</button>
+  </section>
+
+  <!-- CONNECT FOUR -->
+  <section id="game-c4" class="view">
+    <button class="back-btn" data-back>‹ All games</button>
+    <div class="status" id="c4-status"></div>
+    <div class="c4-board" id="c4-board"></div>
+    <button class="restart-btn" id="c4-restart">Play again</button>
+  </section>
+
+  <!-- TUG OF WAR -->
+  <section id="game-tug" class="view">
+    <button class="back-btn" data-back>‹ All games</button>
+    <div class="tug-wrap">
+      <div class="status" id="tug-status">Ready? Tap your side as fast as you can!</div>
+      <div class="tug-meter"><div class="tug-marker" id="tug-marker"></div></div>
+      <div class="tug-zones">
+        <button class="tug-zone p1" id="tug-p1">PLAYER 1<br>TAP TAP TAP</button>
+        <button class="tug-zone p2" id="tug-p2">PLAYER 2<br>TAP TAP TAP</button>
+      </div>
+      <div class="tug-result" id="tug-result"></div>
+    </div>
+    <button class="restart-btn" id="tug-restart">Play again</button>
+  </section>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- view switching ----------
+  function showView(id){
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+  document.querySelectorAll('.tile').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const g = btn.dataset.game;
+      if(g==='xo') startXO();
+      if(g==='c4') startC4();
+      if(g==='tug') startTug();
+    });
+  });
+  document.querySelectorAll('[data-back]').forEach(btn=>{
+    btn.addEventListener('click', ()=> showView('home'));
+  });
+
+  // ---------- fullscreen ----------
+  document.getElementById('fs-btn').addEventListener('click', ()=>{
+    if(!document.fullscreenElement){
+      document.documentElement.requestFullscreen?.().catch(()=>{});
+    } else {
+      document.exitFullscreen?.().catch(()=>{});
+    }
+  });
+
+  // =========================================================
+  // TIC TAC TOE
+  // =========================================================
+  let xoBoard, xoTurn, xoActive;
+  const xoBoardEl = document.getElementById('xo-board');
+  const xoStatusEl = document.getElementById('xo-status');
+  const XO_LINES = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+  function startXO(){
+    xoBoard = Array(9).fill(null);
+    xoTurn = 'X';
+    xoActive = true;
+    renderXO();
+    showView('game-xo');
+  }
+  function renderXO(){
+    xoBoardEl.innerHTML = '';
+    xoBoard.forEach((val,i)=>{
+      const cell = document.createElement('div');
+      cell.className = 'xo-cell' + (val ? ' '+val.toLowerCase() : '');
+      cell.textContent = val || '';
+      cell.addEventListener('click', ()=> xoMove(i));
+      xoBoardEl.appendChild(cell);
+    });
+    xoStatusEl.textContent = `Player ${xoTurn}'s turn`;
+  }
+  function xoWinner(){
+    for(const [a,b,c] of XO_LINES){
+      if(xoBoard[a] && xoBoard[a]===xoBoard[b] && xoBoard[a]===xoBoard[c]) return xoBoard[a];
+    }
+    if(xoBoard.every(v=>v)) return 'draw';
+    return null;
+  }
+  function xoMove(i){
+    if(!xoActive || xoBoard[i]) return;
+    xoBoard[i] = xoTurn;
+    const winner = xoWinner();
+    if(winner){
+      xoActive = false;
+      renderXO();
+      xoStatusEl.textContent = winner==='draw' ? "It's a draw — nice try both!" : `Player ${winner} wins! 🎉`;
+    } else {
+      xoTurn = xoTurn==='X' ? 'O' : 'X';
+      renderXO();
+    }
+  }
+  document.getElementById('xo-restart').addEventListener('click', startXO);
+
+  // =========================================================
+  // CONNECT FOUR
+  // =========================================================
+  const C4_ROWS = 6, C4_COLS = 7;
+  let c4Board, c4Turn, c4Active;
+  const c4BoardEl = document.getElementById('c4-board');
+  const c4StatusEl = document.getElementById('c4-status');
+
+  function startC4(){
+    c4Board = Array.from({length:C4_ROWS}, ()=>Array(C4_COLS).fill(null));
+    c4Turn = 1;
+    c4Active = true;
+    renderC4();
+    c4StatusEl.textContent = `Player 1's turn`;
+    showView('game-c4');
+  }
+  function renderC4(){
+    c4BoardEl.innerHTML = '';
+    for(let r=0;r<C4_ROWS;r++){
+      for(let c=0;c<C4_COLS;c++){
+        const cell = document.createElement('div');
+        const val = c4Board[r][c];
+        cell.className = 'c4-cell' + (val ? ' p'+val : '');
+        cell.addEventListener('click', ()=> c4Move(c));
+        c4BoardEl.appendChild(cell);
+      }
+    }
+  }
+  function c4DropRow(col){
+    for(let r=C4_ROWS-1;r>=0;r--){ if(!c4Board[r][col]) return r; }
+    return -1;
+  }
+  function c4CountDir(row,col,dr,dc,player){
+    let r=row+dr, c=col+dc, count=0;
+    while(r>=0 && r<C4_ROWS && c>=0 && c<C4_COLS && c4Board[r][c]===player){
+      count++; r+=dr; c+=dc;
+    }
+    return count;
+  }
+  function c4IsWin(row,col){
+    const player = c4Board[row][col];
+    const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+    for(const [dr,dc] of dirs){
+      const total = 1 + c4CountDir(row,col,dr,dc,player) + c4CountDir(row,col,-dr,-dc,player);
+      if(total>=4) return true;
+    }
+    return false;
+  }
+  function c4IsFull(){ return c4Board.every(row=>row.every(v=>v)); }
+  function c4Move(col){
+    if(!c4Active) return;
+    const row = c4DropRow(col);
+    if(row===-1) return;
+    c4Board[row][col] = c4Turn;
+    const won = c4IsWin(row,col);
+    renderC4();
+    if(won){
+      c4Active = false;
+      c4StatusEl.textContent = `Player ${c4Turn} wins! 🎉`;
+    } else if(c4IsFull()){
+      c4Active = false;
+      c4StatusEl.textContent = "It's a draw — nice try both!";
+    } else {
+      c4Turn = c4Turn===1 ? 2 : 1;
+      c4StatusEl.textContent = `Player ${c4Turn}'s turn`;
+    }
+  }
+  document.getElementById('c4-restart').addEventListener('click', startC4);
+
+  // =========================================================
+  // TUG OF WAR
+  // =========================================================
+  let tugValue, tugActive;
+  const tugMarker = document.getElementById('tug-marker');
+  const tugResult = document.getElementById('tug-result');
+  const tugStatus = document.getElementById('tug-status');
+  const TUG_STEP = 3.5;
+
+  function startTug(){
+    tugValue = 50;
+    tugActive = true;
+    tugResult.textContent = '';
+    tugStatus.textContent = 'Ready? Tap your side as fast as you can!';
+    updateTugMarker();
+    showView('game-tug');
+  }
+  function updateTugMarker(){ tugMarker.style.left = tugValue + '%'; }
+  function tugTap(player){
+    if(!tugActive) return;
+    tugValue += (player===1 ? -TUG_STEP : TUG_STEP);
+    tugValue = Math.max(0, Math.min(100, tugValue));
+    updateTugMarker();
+    if(tugValue<=0 || tugValue>=100){
+      tugActive = false;
+      const winner = tugValue<=0 ? 1 : 2;
+      tugStatus.textContent = '';
+      tugResult.textContent = `Player ${winner} wins! 🎉`;
+    }
+  }
+  document.getElementById('tug-p1').addEventListener('pointerdown', e=>{ e.preventDefault(); tugTap(1); });
+  document.getElementById('tug-p2').addEventListener('pointerdown', e=>{ e.preventDefault(); tugTap(2); });
+  document.getElementById('tug-restart').addEventListener('click', startTug);
+
+})();
+</script>
+</body>
+</html>
