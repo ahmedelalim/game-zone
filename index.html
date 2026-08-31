@@ -49,10 +49,10 @@
   .logo-bar{
     flex:0 0 auto;
     display:flex; align-items:center; justify-content:center;
-    padding: clamp(10px,2.5vh,26px) 0 clamp(4px,1.5vh,14px);
+    padding: clamp(8px,2vh,20px) 0 clamp(4px,1vh,10px);
   }
   .logo-bar img{
-    width: clamp(120px,26vw,220px);
+    width: clamp(100px,22vw,180px);
     height:auto;
     filter: drop-shadow(0 6px 14px var(--shadow));
   }
@@ -62,7 +62,7 @@
   .view{
     position:absolute; inset:0;
     display:none; flex-direction:column; align-items:center; justify-content:center;
-    padding: 4vh 5vw; gap: clamp(14px,2.5vh,28px);
+    padding: 2vh 4vw; gap: clamp(10px,2vh,20px);
     animation: rise .35s ease both;
   }
   .view.active{ display:flex; }
@@ -70,57 +70,77 @@
   @media (prefers-reduced-motion: reduce){ .view{ animation:none; } }
 
   .back-btn{
-    position:absolute; top: 3vh; inset-inline-start: 5vw;
+    position:absolute; top: 2vh; inset-inline-start: 4vw;
     background:var(--panel-strong); color:var(--white);
     border:none; border-radius:14px;
-    padding: 12px 20px; font-size:1.05rem; font-weight:700;
-    cursor:pointer; text-align: center;
+    padding: 10px 18px; font-size:1rem; font-weight:700;
+    cursor:pointer; text-align: center; z-index: 10;
   }
   .back-btn:active{ background:var(--panel); }
 
   .fullscreen-btn{
-    position:absolute; top:3vh; inset-inline-end:5vw;
+    position:absolute; top:2vh; inset-inline-end:4vw;
     background:transparent; color:var(--white);
     border:2px solid var(--panel-strong); border-radius:12px;
-    padding:10px 14px; font-size:.95rem; font-weight:700;
-    cursor:pointer; opacity:.85; text-align: center;
+    padding:8px 12px; font-size:.9rem; font-weight:700;
+    cursor:pointer; opacity:.85; text-align: center; z-index: 10;
   }
 
   /* ---------- home ---------- */
-  #home h1{ font-size: clamp(1.8rem,5vw,2.6rem); margin:0 0 .2rem; text-align:center; }
-  #home .subtitle{ margin:0 0 1rem; opacity:.85; font-weight:500; text-align:center; }
+  #home h1{ font-size: clamp(1.6rem,4vw,2.2rem); margin:0; text-align:center; }
+  #home .subtitle{ margin:0 0 .5rem; opacity:.85; font-weight:500; text-align:center; font-size: clamp(.85rem,2vw,1.05rem); }
 
-  .menu{ display:flex; flex-direction:column; gap:16px; width:100%; max-width:640px; }
+  /* 2x2 Square Grid Configuration */
+  .menu{ 
+    display:grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    grid-template-rows: repeat(2, 1fr); 
+    gap: clamp(12px, 2.5vw, 20px); 
+    width: 100%; 
+    max-width: min(85vw, 550px);
+    aspect-ratio: 1 / 1;
+  }
 
   .tile{
     position:relative;
-    display:flex; align-items:center; gap:18px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap: 8px;
     background:var(--red); color:var(--white);
-    border:none; border-radius:26px;
-    padding: clamp(14px,2.5vh,22px) 24px;
-    text-align:start; cursor:pointer;
+    border:none; border-radius:24px;
+    padding: 12px;
+    text-align:center; cursor:pointer;
     box-shadow: 0 8px 0 rgba(0,0,0,.22);
     transition: transform .08s ease, box-shadow .08s ease;
+    width: 100%;
+    height: 100%;
   }
   .tile:active{ transform:translateY(6px); box-shadow:0 2px 0 rgba(0,0,0,.22); }
 
   .tile-icon{
-    flex:0 0 auto; width:64px; height:64px;
+    flex:0 0 auto; 
+    width: clamp(42px, 8vw, 60px); 
+    height: clamp(42px, 8vw, 60px);
     display:grid; place-items:center;
     background:var(--panel-strong); border-radius:16px;
-    font-size:1.8rem;
+    font-size: clamp(1.4rem, 3vw, 2rem);
   }
-  .tile-text .display{ font-size:1.3rem; font-weight:800; line-height:1.1; }
-  .tile-text p{ margin:.25rem 0 0; font-size:.88rem; opacity:.9; font-weight:500; }
+  .tile-text .display{ font-size: clamp(1.05rem, 2.2vw, 1.3rem); font-weight:800; line-height:1.1; display:block; }
+  .tile-text p{ margin:.2rem 0 0; font-size: clamp(.7rem, 1.4vw, .85rem); opacity:.9; font-weight:500; line-height: 1.2; }
 
-  .pips{ margin-inline-start:auto; display:flex; gap:6px; flex:0 0 auto; }
-  .pips span{ width:9px; height:9px; border-radius:50%; background:var(--white); opacity:.85; }
+  /* Position domino pips nicely in top right corner of each square */
+  .pips{ 
+    position: absolute;
+    top: 12px;
+    inset-inline-end: 14px;
+    display:flex; gap:4px; flex:0 0 auto; 
+  }
+  .pips span{ width:7px; height:7px; border-radius:50%; background:var(--white); opacity:.85; }
 
   /* ---------- status / restart shared ---------- */
-  .status{ font-size: clamp(1.3rem,3.8vw,2.2rem); font-weight:800; text-align:center; min-height:1.6em; }
+  .status{ font-size: clamp(1.2rem,3.5vw,2rem); font-weight:800; text-align:center; min-height:1.5em; }
   .restart-btn{
     background:var(--red); color:var(--white); border:none; border-radius:16px;
-    padding:clamp(14px,2vh,22px) clamp(26px,4.5vw,44px); font-size:clamp(1.15rem,2.8vw,1.7rem); font-weight:800; cursor:pointer;
+    padding:clamp(12px,1.8vh,20px) clamp(22px,4vw,40px); font-size:clamp(1rem,2.5vw,1.5rem); font-weight:800; cursor:pointer;
     box-shadow:0 5px 0 rgba(0,0,0,.22); text-align: center;
   }
   .restart-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.22); }
@@ -128,12 +148,12 @@
   /* ---------- tic tac toe ---------- */
   .xo-board{
     display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); gap:2vw;
-    width:min(92%,80vh); aspect-ratio:1;
+    width:min(92%,75vh); aspect-ratio:1;
   }
   .xo-cell{
     background:var(--panel-strong); border-radius:18px;
     display:flex; align-items:center; justify-content:center;
-    font-family:'Baloo Bhaijaan 2',system-ui; font-size:min(15vw,9rem); font-weight:800;
+    font-family:'Baloo Bhaijaan 2',system-ui; font-size:min(15vw,8rem); font-weight:800;
     cursor:pointer; color:var(--white);
     min-width:0; min-height:0; overflow:hidden;
     border:4px dashed transparent;
@@ -146,7 +166,7 @@
   .c4-board{
     display:grid; grid-template-columns:repeat(7,1fr); gap: 1.4vw;
     background:var(--panel); padding: 1.4vw; border-radius:20px;
-    width:min(92%,86vh); aspect-ratio:7/6;
+    width:min(92%,80vh); aspect-ratio:7/6;
   }
   .c4-cell{ background:var(--panel-strong); border-radius:50%; cursor:pointer; min-width:0; min-height:0; border:4px dashed transparent; }
   .c4-cell.p1{ background:var(--red); }
@@ -155,7 +175,7 @@
   .c4-cell.win.p2{ border-color:var(--red); }
 
   /* ---------- tug of war ---------- */
-  .tug-wrap{ width:100%; max-width:min(92%,1200px); display:flex; flex-direction:column; align-items:center; gap:clamp(18px,3vh,34px); flex:1; justify-content:center; }
+  .tug-wrap{ width:100%; max-width:min(92%,1200px); display:flex; flex-direction:column; align-items:center; gap:clamp(14px,2.5vh,30px); flex:1; justify-content:center; }
   .tug-meter{ width:100%; height:clamp(28px,4.5vh,60px); background:var(--panel); border-radius:20px; position:relative; overflow:hidden; border:2px solid var(--panel-strong); }
   .tug-marker{
     position:absolute; top:-3px; bottom:-3px; left:50%; width:clamp(14px,1.6vw,28px);
@@ -181,10 +201,10 @@
     align-items: center;
     justify-content: center;
     background: var(--panel-strong);
-    padding: 24px 40px;
+    padding: 20px 30px;
     border-radius: 28px;
     border: 3px solid var(--panel);
-    width: min(90%, 480px);
+    width: min(90%, 450px);
     box-shadow: inset 0 0 20px rgba(0,0,0,0.15);
     transition: all 0.3s ease;
   }
@@ -192,9 +212,9 @@
     background: rgba(0,0,0,0.25);
     padding: 6px 18px;
     border-radius: 12px;
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 700;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     border: 1px solid rgba(255,255,255,0.15);
   }
   .target-badge span {
@@ -203,7 +223,7 @@
     font-size: 1.15em;
   }
   .timer-display {
-    font-size: clamp(3.5rem, 12vw, 5.5rem);
+    font-size: clamp(3.2rem, 11vw, 5rem);
     font-weight: 800;
     font-family: monospace, sans-serif;
     letter-spacing: 2px;
@@ -215,8 +235,8 @@
     color: var(--white);
     border: none;
     border-radius: 20px;
-    padding: 16px 40px;
-    font-size: 1.5rem;
+    padding: 14px 36px;
+    font-size: 1.4rem;
     font-weight: 800;
     cursor: pointer;
     box-shadow: 0 6px 0 rgba(0,0,0,.22);
@@ -261,45 +281,46 @@
       اضغط على لعبة لتبدأ اللعب فورًا
       <span class="sub-en">Tap a game to play immediately</span>
     </p>
+
     <div class="menu">
       <button class="tile" data-game="xo">
+        <span class="pips"><span></span></span>
         <span class="tile-icon">✕⭘</span>
         <span class="tile-text">
           <span class="display">إكس أو</span>
           <span class="sub-en">Tic Tac Toe</span>
-          <p>ثلاثة متتالية تفوز <span class="sub-en">Get three in a row to win</span></p>
+          <p>ثلاثة متتالية تفوز<span class="sub-en">Get 3 in a row</span></p>
         </span>
-        <span class="pips"><span></span></span>
       </button>
       
       <button class="tile" data-game="c4">
+        <span class="pips"><span></span><span></span></span>
         <span class="tile-icon">🔴</span>
         <span class="tile-text">
           <span class="display">أربعة متصلة</span>
           <span class="sub-en">Connect Four</span>
-          <p>رتب أربعة لتفوز <span class="sub-en">Connect four to win</span></p>
+          <p>رتب أربعة لتفوز<span class="sub-en">Connect 4 to win</span></p>
         </span>
-        <span class="pips"><span></span><span></span></span>
       </button>
 
       <button class="tile" data-game="tug">
+        <span class="pips"><span></span><span></span><span></span></span>
         <span class="tile-icon">💪</span>
         <span class="tile-text">
           <span class="display">شد الحبل</span>
           <span class="sub-en">Tug of War</span>
-          <p>اضغط أسرع واسحب بقوة <span class="sub-en">Tap faster and pull hard</span></p>
+          <p>اضغط أسرع واسحب<span class="sub-en">Tap faster & pull</span></p>
         </span>
-        <span class="pips"><span></span><span></span><span></span></span>
       </button>
 
       <button class="tile" data-game="timer">
+        <span class="pips"><span></span><span></span><span></span><span></span></span>
         <span class="tile-icon">⏱️</span>
         <span class="tile-text">
           <span class="display">تحدي الـ 10 ثواني</span>
-          <span class="sub-en">10-Second Challenge</span>
-          <p>أوقف العداد عند 10.00 بالضبط <span class="sub-en">Stop the timer at exactly 10.00</span></p>
+          <span class="sub-en">10s Challenge</span>
+          <p>أوقف عند 10.00<span class="sub-en">Stop at 10.00</span></p>
         </span>
-        <span class="pips"><span></span><span></span><span></span><span></span></span>
       </button>
     </div>
   </section>
